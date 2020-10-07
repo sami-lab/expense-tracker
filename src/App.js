@@ -11,14 +11,23 @@ import AddTransaction from './component/AddTransaction/AddTransaction';
 const App = () => {
   return (
     <GlobalProvider>
-      <div className="mx-auto mt-2" style={{ width: "25em", maxWidth:"25em" }}>
-        <div className="d-flex  align-items-center  flex-column">
-          <Header name="Muhammad Sami" />
-          <Balance />
-          <Summary/>
-          <TransactionHistory/>
-          <AddTransaction/>
+      <div className="mx-auto mt-2">
+        <Header name="Muhammad Sami" />
+        <div className="row d-flex justify-content-center">
+          <div className="col-md-5 col-sm-12 ">
+            <div className="d-flex  align-items-center  flex-column">
+              <Balance />
+              <Summary />
+            </div>
+          </div>
+          <div className="col-md-5 col-sm-12">
+            <div className="d-flex  align-items-center  flex-column">
+              <AddTransaction />
+              <TransactionHistory />
+            </div>
+          </div>
         </div>
+        
       </div>
     </GlobalProvider>
   );
