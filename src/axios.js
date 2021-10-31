@@ -1,6 +1,8 @@
 import axios from 'axios';
 
+let baseURL = 'http://localhost:5000/api/v1';
+baseURL = 'https://authentication-testing.herokuapp.com/';
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api/v1',
+  baseURL,
 });
 export default instance;
