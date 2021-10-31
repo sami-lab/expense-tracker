@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from '../axios';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { GlobalContext } from '../context/GlobalContext';
 
 export default function Signup() {
+  const router = useHistory();
+  const { user: globaluser } = useContext(GlobalContext);
+  if (!Object.keys(globaluser).length === 0 || globaluser.email)
+    router.push('/');
+
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
@@ -108,7 +114,8 @@ export default function Signup() {
         confirmPassword: user.confirmPassword.value,
       });
 
-      if (result.status === 'success') {
+      if (result.data.status === 'success') {
+        console.log(result);
         setSignupSuccess(true);
       } else {
         setError({
@@ -119,11 +126,11 @@ export default function Signup() {
 
       setLoading(false);
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data.message);
       setLoading(false);
       setError({
         status: true,
-        message: err.message,
+        message: err?.response?.data?.message || 'Something went wrong',
       });
     }
   };
@@ -262,16 +269,30 @@ export default function Signup() {
           </div>
           <div className="form-group">
             {signupSuccess && (
-              <div className="valid-feedback">
-                {' '}
+              <div
+                className="alert alert-success alert-dismissible fade show"
+                role="alert"
+              >
                 An Email has been sent to your email Adress.Please verify your
                 email to continue
+                <button
+                  type="button"
+                  onClick={() => setSignupSuccess(false)}
+                  className="close"
+                  data-dismiss="alert"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
             )}
           </div>
           <div className="form-group">
             {error.status && (
-              <div className="invalid-feedback"> {error.message}</div>
+              <div style={{ color: 'red', fontSize: '12px' }}>
+                {' '}
+                {error.message}
+              </div>
             )}
           </div>
           <button

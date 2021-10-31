@@ -16,7 +16,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         transactions: state.transactions.filter(
-          (transaction) => transaction.id !== action.payload
+          (transaction) => transaction._id !== action.payload
         ),
       };
     case actionTypes.SET_USER:

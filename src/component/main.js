@@ -10,7 +10,7 @@ export default function Main() {
   return (
     <div className="mx-auto mt-2">
       <Header name="Muhammad Sami" />
-      <div className="row d-flex justify-content-center">
+      <div className=" d-flex justify-content-center">
         <div className="col-md-5 col-sm-12 ">
           <div className="d-flex  align-items-center  flex-column">
             <Balance />

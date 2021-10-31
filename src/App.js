@@ -7,8 +7,9 @@ import AuthRoute from './component/Auth';
 import Main from './component/main';
 import Login from './component/login';
 import Signup from './component/signup';
-import axios from './axios';
+import VerifyUser from './component/verifyUser';
 
+import axios from './axios';
 const Routes = () => {
   const [loadingAuth, setLoadingAuth] = useState(true);
   const { setAuth, addTransactions } = useContext(GlobalContext);
@@ -28,12 +29,15 @@ const Routes = () => {
         //validate Token Here from server or async storage to find user state
         //validating through server
         try {
-          const result = await axios.post('/users/validateToken', {
-            token: Token,
+          const result = await axios.post('/users/validateToken', null, {
+            headers: {
+              authorization: 'Bearer ' + Token,
+            },
           });
-          if (result.data?.user !== null) {
-            setAuth({ ...result.data.user, token: Token });
-            addTransactions(result.data.transactions);
+          if (result.data.status === 'success') {
+            console.log(result.data.data.user);
+            setAuth({ ...result.data.data.user, token: Token });
+            addTransactions(result.data.data.transactions);
           }
           setLoadingAuth(false);
         } catch (e) {
@@ -62,6 +66,7 @@ const Routes = () => {
     <Switch>
       <Route path="/register" render={(props) => <Signup />} />
       <Route path="/login" render={(props) => <Login />} />
+      <Route path="/verifyUser/:token" render={(props) => <VerifyUser />} />
       <AuthRoute path="/" exact render={(props) => <Main />} />
     </Switch>
   );

@@ -3,7 +3,7 @@ import axios from '../../axios';
 import { GlobalContext } from '../../context/GlobalContext';
 
 const AddTransaction = () => {
-  const { addTransaction } = useContext(GlobalContext);
+  const { addTransaction, user } = useContext(GlobalContext);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
@@ -52,12 +52,20 @@ const AddTransaction = () => {
     }
     try {
       setLoading(true);
-      const result = await axios.post('/transactions/', {
-        description: transaction.description.value,
-        amount: transaction.amount.value,
-      });
-      if (result.status === 'success') {
-        addTransaction(result.data.doc);
+      const result = await axios.post(
+        '/transactions/',
+        {
+          description: transaction.description.value,
+          amount: transaction.amount.value,
+        },
+        {
+          headers: {
+            authorization: 'Bearer ' + user.token,
+          },
+        }
+      );
+      if (result.data.status === 'success') {
+        addTransaction(result.data.data.doc);
         setTransaction({
           description: {
             value: '',
@@ -82,7 +90,7 @@ const AddTransaction = () => {
       setLoading(false);
       setError({
         status: true,
-        message: err.message,
+        message: err.response?.data?.message || 'Something went wrong',
       });
     }
   };
@@ -157,9 +165,7 @@ const AddTransaction = () => {
           )}
         </div>
         <div className="form-group">
-          {error.status && (
-            <div className="invalid-feedback"> {error.message}</div>
-          )}
+          {error.status && <div style={{ color: 'red' }}> {error.message}</div>}
         </div>
         <button
           type="submit"

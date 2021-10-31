@@ -5,7 +5,13 @@ import { Link, useHistory } from 'react-router-dom';
 
 export default function Login() {
   const router = useHistory();
-  const { setAuth, addTransactions } = useContext(GlobalContext);
+  const {
+    setAuth,
+    addTransactions,
+    user: globaluser,
+  } = useContext(GlobalContext);
+  if (!Object.keys(globaluser).length === 0 || globaluser.email)
+    router.push('/');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
     status: false,
@@ -73,11 +79,11 @@ export default function Login() {
         email: user.email.value,
         password: user.password.value,
       });
-
-      if (result.status === 'success') {
-        localStorage.setItem('jwt', result.token);
-        setAuth({ ...result.data.user, token: result.token });
-        addTransactions(result.data.transactions);
+      console.log(result);
+      if (result.data.status === 'success') {
+        await localStorage.setItem('jwt', result.data.token);
+        setAuth({ ...result.data.data.user, token: result.data.token });
+        addTransactions(result.data.data.transactions);
         router.push('/');
       } else {
         setError({
@@ -87,14 +93,15 @@ export default function Login() {
       }
       setLoading(false);
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data.message);
       setLoading(false);
       setError({
         status: true,
-        message: err.message,
+        message: err.response?.data?.message || 'Something went wrong',
       });
     }
   };
+  console.log(error);
   return (
     <div
       className="w-100"
@@ -171,7 +178,21 @@ export default function Login() {
           </div>
           <div className="form-group">
             {error.status && (
-              <div className="invalid-feedback"> {error.message}</div>
+              <div
+                className="alert alert-danger alert-dismissible fade show"
+                role="alert"
+              >
+                {error.message}
+                <button
+                  type="button"
+                  onClick={() => setError({ status: false, message: '' })}
+                  className="close"
+                  data-dismiss="alert"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
             )}
           </div>
           <button
