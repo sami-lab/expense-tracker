@@ -10,24 +10,27 @@ export default function VerifyUser() {
   });
   const params = useParams();
 
-  useEffect(async () => {
-    try {
-      const result = await axios.post('/users/verifyEmail/' + params.token);
+  useEffect(() => {
+    const verify = async () => {
+      try {
+        const result = await axios.post('/users/verifyEmail/' + params.token);
 
-      setMessage({
-        status: true,
-        error: false,
-        message: result.data.message,
-      });
-    } catch (err) {
-      console.log(err.response.data.message);
-      setMessage({
-        status: true,
-        error: true,
-        message: err?.response?.data?.message || 'Something went wrong',
-      });
-    }
-  }, []);
+        setMessage({
+          status: true,
+          error: false,
+          message: result.data.message,
+        });
+      } catch (err) {
+        console.log(err.response.data.message);
+        setMessage({
+          status: true,
+          error: true,
+          message: err?.response?.data?.message || 'Something went wrong',
+        });
+      }
+    };
+    verify();
+  }, [params.token]);
 
   if (message.status) {
     return (

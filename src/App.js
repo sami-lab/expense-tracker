@@ -48,7 +48,7 @@ const Routes = () => {
       }
     };
     fetchToken();
-  }, []);
+  }, [addTransactions, setAuth]);
 
   if (loadingAuth) {
     return (
